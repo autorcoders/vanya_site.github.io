@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bybit • Выбор языка</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .app-container {
+            max-width: 820px;
+            width: 100%;
+            position: relative;
+            background: #000000;
+            padding: 40px 36px;
+            overflow: hidden;
+        }
+
+        /* ===== СТРАНИЦА 1: ВЫБОР ЯЗЫКА ===== */
+        .page-selector {
+            display: block;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .page-selector.hidden {
+            display: none;
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .logo-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .logo-icon i {
+            font-size: 36px;
+            color: #ffffff;
+        }
+
+        .logo-icon span {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .lang-subtitle {
+            color: #888888;
+            font-size: 16px;
+            margin-bottom: 36px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .lang-subtitle i {
+            color: #ffffff;
+            margin-right: 8px;
+        }
+
+        .lang-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .lang-option {
+            background: transparent;
+            border: 1px solid #333333;
+            color: #cccccc;
+            padding: 18px 24px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .lang-option:hover {
+            border-color: #666666;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .lang-option .lang-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .lang-option .lang-left i {
+            font-size: 20px;
+            color: #666666;
+            width: 28px;
+        }
+
+        .lang-option .arrow {
+            color: #444444;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-option:hover .arrow {
+            color: #888888;
+        }
+
+        .lang-option .lang-code {
+            font-size: 13px;
+            font-weight: 400;
+            color: #555555;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 12px;
+            border-radius: 4px;
+        }
+
+        .footer-note {
+            color: #333333;
+            font-size: 13px;
+            margin-top: 20px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .footer-note i {
+            color: #444444;
+            margin: 0 6px;
+        }
+
+        /* ===== СТРАНИЦА 2: КОНТЕНТ ===== */
+        .page-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .page-content.active {
+            display: block;
+            animation: fadeUp 0.4s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Шапка с лого и аватаром */
+        .header-section {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 30px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .logo-block {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-block i {
+            font-size: 32px;
+            color: #ffffff;
+        }
+
+        .logo-block span {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .avatar-wrap {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3px;
+        }
+
+        .avatar-wrap img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            display: block;
+            background: #0a0a0a;
+        }
+
+        /* Индикатор выбранного языка */
+        .lang-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 20px 8px 0;
+            margin-bottom: 20px;
+            color: #888888;
+            font-size: 14px;
+            border-bottom: 1px solid #1a1a1a;
+            width: 100%;
+        }
+
+        .lang-indicator i {
+            color: #ffffff;
+        }
+
+        .lang-indicator strong {
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        /* ===== ИНСТРУКЦИЯ ===== */
+        .instruction {
+            padding: 10px 0;
+            color: #cccccc;
+            line-height: 1.8;
+        }
+
+        .instruction .title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .instruction .title i {
+            color: #ffffff;
+            font-size: 20px;
+        }
+
+        .instruction .step {
+            margin-bottom: 22px;
+        }
+
+        .instruction .step .step-title {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 17px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instruction .step .step-title i {
+            color: #666666;
+            font-size: 14px;
+        }
+
+        .instruction .step ul {
+            list-style: none;
+            padding-left: 28px;
+        }
+
+        .instruction .step ul li {
+            position: relative;
+            padding: 4px 0;
+            color: #aaaaaa;
+            font-size: 15px;
+        }
+
+        .instruction .step ul li::before {
+            content: "▸";
+            position: absolute;
+            left: -20px;
+            color: #444444;
+        }
+
+        .instruction .step ul li strong {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .instruction .step ul li .warn {
+            color: #888888;
+            font-size: 14px;
+            display: block;
+            padding-left: 4px;
+            margin-top: 2px;
+        }
+
+        .instruction .step ul li .warn i {
+            color: #666666;
+            margin-right: 6px;
+        }
+
+        .instruction .final {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #1a1a1a;
+            font-size: 18px;
+            font-weight: 500;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .instruction .final i {
+            margin-right: 10px;
+        }
+
+        .instruction .final .sub {
+            font-size: 15px;
+            font-weight: 400;
+            color: #888888;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: #555555;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            border-top: 1px solid #1a1a1a;
+            padding-top: 20px;
+            width: 100%;
+        }
+
+        .back-link:hover {
+            color: #999999;
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        /* Адаптив */
+        @media (max-width: 640px) {
+            .app-container {
+                padding: 20px 14px;
+            }
+            .header-section {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .avatar-wrap {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+            .avatar-wrap img {
+                width: 140px;
+                height: 140px;
+            }
+            .lang-option {
+                padding: 14px 18px;
+                font-size: 16px;
+            }
+            .instruction .title {
+                font-size: 18px;
+            }
+            .instruction .step ul {
+                padding-left: 20px;
+            }
+            .instruction .step ul li {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+
+        <!-- ===== СТРАНИЦА 1: ВЫБОР ЯЗЫКА ===== -->
+        <div class="page-selector" id="pageSelector">
+            <div class="logo-icon">
+                <i class="fas fa-chart-line"></i>
+                <span>Bybit</span>
+            </div>
+            <div class="lang-subtitle">
+                <i class="fas fa-globe"></i> Выберите язык / Choose your language / 选择语言
+            </div>
+
+            <div class="lang-grid">
+                <button class="lang-option" data-lang="ru">
+                    <span class="lang-left">
+                        <i class="fas fa-flag"></i>
+                        Русский
+                        <span class="lang-code">RU</span>
+                    </span>
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </button>
+
+                <button class="lang-option" data-lang="en">
+                    <span class="lang-left">
+                        <i class="fas fa-flag-usa"></i>
+                        English
+                        <span class="lang-code">EN</span>
+                    </span>
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </button>
+
+                <button class="lang-option" data-lang="zh">
+                    <span class="lang-left">
+                        <i class="fas fa-flag"></i>
+                        中文
+                        <span class="lang-code">ZH</span>
+                    </span>
+                    <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                </button>
+            </div>
+
+            <!-- Текст "vanya.png" и "180x180" убраны из футера -->
+            <div class="footer-note">
+                <i class="fas fa-shield-alt"></i> Bybit · <i class="far fa-image"></i>
+            </div>
+        </div>
+
+        <!-- ===== СТРАНИЦА 2: КОНТЕНТ ===== -->
+        <div class="page-content" id="pageContent">
+            <!-- Шапка с лого и vanya.png -->
+            <div class="header-section">
+                <div class="logo-block">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Bybit</span>
+                </div>
+                <div class="avatar-wrap">
+                    <img src="vanya.png" alt="vanya" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'180\' height=\'180\' viewBox=\'0 0 180 180\'%3E%3Crect width=\'180\' height=\'180\' fill=\'%230a0a0a\'/%3E%3Ctext x=\'90\' y=\'100\' font-family=\'Inter\' font-size=\'26\' fill=\'%23333333\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3Evanya.png%3C/text%3E%3C/svg%3E';">
+                </div>
+            </div>
+
+            <!-- Индикатор языка -->
+            <div class="lang-indicator">
+                <i class="fas fa-globe"></i> Текущий язык: <strong id="currentLang">RU</strong>
+            </div>
+
+            <!-- ИНСТРУКЦИЯ -->
+            <div class="instruction" id="instructionDisplay">
+                <!-- заполняется JS -->
+            </div>
+
+            <!-- Кнопка назад -->
+            <div class="back-link" id="backToSelector">
+                <i class="fas fa-arrow-left"></i> Назад к выбору языка
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        (function() {
+            // ---- ИНСТРУКЦИЯ НА ТРЁХ ЯЗЫКАХ ----
+            const translations = {
+                ru: {
+                    title: 'Пошаговая инструкция: Как купить или продать NFT-подарок через нашего бота',
+                    steps: [
+                        {
+                            title: 'Шаг 1. Инициализация сделки',
+                            items: [
+                                'Выбор языка: В главном меню бота выберите удобный для вас язык интерфейса.',
+                                'Создание сделки: Нажмите кнопку «Создать сделку» и выберите категорию «NFT подарок».'
+                            ]
+                        },
+                        {
+                            title: 'Шаг 2. Настройка условий и отправка данных',
+                            items: [
+                                'Выбор валюты: Укажите нужную вам валюту для проведения расчета.',
+                                'Указание суммы: Отправьте боту текстовым сообщением точную сумму сделки (просто числом).',
+                                'Отправка подарка: Скиньте боту ссылку на продаваемый NFT-подарок. <span class="warn"><i class="fas fa-exclamation-triangle"></i> Если вы продаете несколько подарков сразу, отправьте все ссылки на них одним сообщением.</span>'
+                            ]
+                        },
+                        {
+                            title: 'Шаг 3. Подключение покупателя и оплата',
+                            items: [
+                                'Приглашение покупателя: Бот сгенерирует для вас уникальную ссылку для подключения. Перешлите эту ссылку вашему покупателю.',
+                                'Ожидание оплаты: После того как покупатель перейдет по ссылке, ожидайте поступления средств с его стороны. Как только оплата пройдет, вы получите мгновенное уведомление прямо в чате с ботом.'
+                            ]
+                        },
+                        {
+                            title: 'Шаг 4. Передача NFT и получение выплаты',
+                            items: [
+                                'Передача подарка: После подтверждения оплаты отправьте NFT-подарок строго на официальный аккаунт нашего менеджера: <strong>@BybitSecure</strong>.',
+                                'Запрос на вывод: Привяжите реквизиты для получения средств в интерфейсе бота и напишите менеджеру слово «вывод».'
+                            ]
+                        }
+                    ],
+                    final: '⏱ Регламент и завершение',
+                    finalSub: '• Выплата средств: Деньги поступают на ваши реквизиты в течение 30 минут (при условии, что менеджер находится в сети).<br>• Финал: Менеджер безопасно передает NFT-подарок покупателю.',
+                    done: '🎉 Сделка успешно завершена!',
+                    langCode: 'RU',
+                    langName: 'Русский'
+                },
+                en: {
+                    title: 'Step-by-step guide: How to buy or sell an NFT gift through our bot',
+                    steps: [
+                        {
+                            title: 'Step 1. Transaction initialization',
+                            items: [
+                                'Language selection: In the main bot menu, select your preferred interface language.',
+                                'Create transaction: Click the "Create transaction" button and select "NFT gift" category.'
+                            ]
+                        },
+                        {
+                            title: 'Step 2. Setting conditions and sending data',
+                            items: [
+                                'Currency selection: Specify the currency you need for the transaction.',
+                                'Amount specification: Send the bot a text message with the exact transaction amount (just a number).',
+                                'Send gift: Send the bot a link to the NFT gift you are selling. <span class="warn"><i class="fas fa-exclamation-triangle"></i> If you are selling multiple gifts at once, send all links in one message.</span>'
+                            ]
+                        },
+                        {
+                            title: 'Step 3. Buyer connection and payment',
+                            items: [
+                                'Invite buyer: The bot will generate a unique connection link for you. Forward this link to your buyer.',
+                                'Waiting for payment: After the buyer follows the link, wait for funds to arrive from their side. As soon as the payment goes through, you will receive an instant notification directly in the chat with the bot.'
+                            ]
+                        },
+                        {
+                            title: 'Step 4. NFT transfer and receiving payout',
+                            items: [
+                                'Transfer gift: After payment confirmation, send the NFT gift strictly to our manager\'s official account: <strong>@BybitSecure</strong>.',
+                                'Withdrawal request: Link your payment details in the bot interface and write the word "withdrawal" to the manager.'
+                            ]
+                        }
+                    ],
+                    final: '⏱ Regulations and completion',
+                    finalSub: '• Payout: Funds are credited to your details within 30 minutes (provided the manager is online).<br>• Final: The manager securely transfers the NFT gift to the buyer.',
+                    done: '🎉 Transaction successfully completed!',
+                    langCode: 'EN',
+                    langName: 'English'
+                },
+                zh: {
+                    title: '分步指南：如何通过我们的机器人购买或出售NFT礼物',
+                    steps: [
+                        {
+                            title: '步骤1. 交易初始化',
+                            items: [
+                                '语言选择：在机器人主菜单中选择您喜欢的界面语言。',
+                                '创建交易：点击「创建交易」按钮，选择「NFT礼物」类别。'
+                            ]
+                        },
+                        {
+                            title: '步骤2. 设置条件和发送数据',
+                            items: [
+                                '货币选择：指定您交易所需的货币。',
+                                '金额指定：向机器人发送一条包含确切交易金额的文本消息（只需数字）。',
+                                '发送礼物：向机器人发送您要出售的NFT礼物链接。 <span class="warn"><i class="fas fa-exclamation-triangle"></i> 如果您同时出售多个礼物，请将所有链接放在一条消息中发送。</span>'
+                            ]
+                        },
+                        {
+                            title: '步骤3. 买家连接和支付',
+                            items: [
+                                '邀请买家：机器人将为您生成一个唯一的连接链接。将此链接转发给您的买家。',
+                                '等待支付：买家点击链接后，请等待对方资金到账。支付完成后，您将在与机器人的聊天中立即收到通知。'
+                            ]
+                        },
+                        {
+                            title: '步骤4. NFT转让和收款',
+                            items: [
+                                '转让礼物：确认付款后，请将NFT礼物严格发送至我们经理的官方账户：<strong>@BybitSecure</strong>。',
+                                '提现请求：在机器人界面中绑定您的收款信息，并向经理发送「提现」一词。'
+                            ]
+                        }
+                    ],
+                    final: '⏱ 规定和完成',
+                    finalSub: '• 付款：资金将在30分钟内到账（前提是经理在线）。<br>• 完成：经理安全地将NFT礼物转交给买家。',
+                    done: '🎉 交易成功完成！',
+                    langCode: 'ZH',
+                    langName: '中文'
+                }
+            };
+
+            // ---- DOM элементы ----
+            const pageSelector = document.getElementById('pageSelector');
+            const pageContent = document.getElementById('pageContent');
+            const instructionDisplay = document.getElementById('instructionDisplay');
+            const currentLang = document.getElementById('currentLang');
+            const backToSelector = document.getElementById('backToSelector');
+
+            // ---- Функция рендера инструкции ----
+            function renderInstruction(lang) {
+                const data = translations[lang] || translations['ru'];
+                
+                let stepsHtml = '';
+                data.steps.forEach((step, index) => {
+                    let itemsHtml = '';
+                    step.items.forEach(item => {
+                        itemsHtml += `<li>${item}</li>`;
+                    });
+                    stepsHtml += `
+                        <div class="step">
+                            <div class="step-title"><i class="fas fa-${index + 1}"></i> ${step.title}</div>
+                            <ul>${itemsHtml}</ul>
+                        </div>
+                    `;
+                });
+
+                return `
+                    <div class="title">
+                        <i class="fas fa-bookmark"></i> ${data.title}
+                    </div>
+                    ${stepsHtml}
+                    <div class="final">
+                        ${data.final}
+                        <span class="sub">${data.finalSub}</span>
+                        <div style="margin-top: 12px; font-size: 20px;">${data.done}</div>
+                    </div>
+                `;
+            }
+
+            // ---- Переключение на страницу контента ----
+            function showContent(lang) {
+                pageSelector.style.display = 'none';
+                pageContent.classList.add('active');
+                pageContent.style.display = 'block';
+
+                const data = translations[lang] || translations['ru'];
+                currentLang.textContent = data.langCode;
+                instructionDisplay.innerHTML = renderInstruction(lang);
+            }
+
+            // ---- Возврат к выбору языка ----
+            function showSelector() {
+                pageContent.classList.remove('active');
+                pageContent.style.display = 'none';
+                pageSelector.style.display = 'block';
+            }
+
+            // ---- Обработчики кликов по кнопкам языков ----
+            document.querySelectorAll('.lang-option').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.dataset.lang;
+                    showContent(lang);
+                });
+            });
+
+            // ---- Кнопка "Назад" ----
+            backToSelector.addEventListener('click', showSelector);
+
+            // ---- По умолчанию показываем страницу выбора языка ----
+            pageSelector.style.display = 'block';
+            pageContent.style.display = 'none';
+            pageContent.classList.remove('active');
+        })();
+    </script>
+</body>
+</html>
